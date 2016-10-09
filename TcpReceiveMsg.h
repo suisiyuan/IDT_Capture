@@ -6,7 +6,7 @@
 class TcpReceiveMsg : public TcpMsg
 {
 public:
-    TcpReceiveMsg(QByteArray message);
+    TcpReceiveMsg(QByteArray data);
     ~TcpReceiveMsg();
 
     QByteArray getReceivedData();

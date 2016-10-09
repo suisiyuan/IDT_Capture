@@ -29,15 +29,12 @@ HEADERS  += CaptureWidget.h \
 FORMS    += desktop.ui
 
 
+win32:INCLUDEPATH += ./3rd/VLC-Qt_1.1.0_win32_msvc2015/include
+win32:CONFIG(release, debug|release): LIBS += -L./3rd/VLC-Qt_1.1.0_win32_msvc2015/lib/ -lVLCQtCore -lVLCQtWidgets
+else:win32:CONFIG(debug, debug|release): LIBS += -L./3rd/VLC-Qt_1.1.0_win32_msvc2015/lib/ -lVLCQtCored -lVLCQtWidgetsd
 
-INCLUDEPATH +=  ./3rd/crc/include \
-                ./3rd/vlc_qt_win32_msvc2015/include
-
-
-win32:CONFIG(release, debug|release): LIBS += -L./3rd/vlc_qt_win32_msvc2015/lib/ -lVLCQtCore -lVLCQtWidgets
-else:win32:CONFIG(debug, debug|release): LIBS += -L./3rd/vlc_qt_win32_msvc2015/lib/ -lVLCQtCored -lVLCQtWidgetsd
-
-win32: LIBS += -L./3rd/crc/lib/ -lcrc
-
+INCLUDEPATH +=  ./3rd/crc/include
+win32:CONFIG(release, debug|release): LIBS += -L./3rd/crc/lib/ -lcrc
+else:win32:CONFIG(debug, debug|release): LIBS += -L./3rd/crc/lib/ -lcrcd
 
 

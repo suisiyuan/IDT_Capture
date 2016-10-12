@@ -22,3 +22,10 @@ QByteArray TcpReceiveMsg::getReceivedData()
 {
     return QByteArray();
 }
+
+
+// 获取数据包的类型
+TcpMsg::TCP_CMD TcpReceiveMsg::type()
+{
+    return TcpMsg::START;
+}

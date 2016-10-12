@@ -34,9 +34,11 @@ win32:CONFIG(release, debug|release): LIBS += -L./3rd/VLC-Qt_1.1.0_win32_msvc201
 else:win32:CONFIG(debug, debug|release): LIBS += -L./3rd/VLC-Qt_1.1.0_win32_msvc2015/lib/ -lVLCQtCored -lVLCQtWidgetsd
 
 
-#crc win32 msvc2015
-win32:INCLUDEPATH += ./3rd/CRC16_win32_msvc2015/include
-win32:CONFIG(release, debug|release): LIBS += -L./3rd/CRC16_win32_msvc2015/lib/ -lcrc
-else:win32:CONFIG(debug, debug|release): LIBS += -L./3rd/CRC16_win32_msvc2015/lib/ -lcrcd
+#crc16
+INCLUDEPATH += ./3rd/CRC16/include
+win32:LIBS += -L./3rd/CRC16_win32_msvc2015/lib/win32 -lcrc
+android:LIBS += -L./3rd/CRC16_win32_msvc2015/lib/android -lcrc
+
+
 
 

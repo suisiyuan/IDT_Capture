@@ -36,8 +36,8 @@ else:win32:CONFIG(debug, debug|release): LIBS += -L./3rd/VLC-Qt_1.1.0_win32_msvc
 
 #crc16
 INCLUDEPATH += ./3rd/CRC16/include
-win32:LIBS += -L./3rd/CRC16_win32_msvc2015/lib/win32 -lcrc
-android:LIBS += -L./3rd/CRC16_win32_msvc2015/lib/android -lcrc
+win32:LIBS += -L./3rd/CRC16/lib/win32 -lcrc
+android:LIBS += -L./3rd/CRC16/lib/android -lcrc
 
 
 

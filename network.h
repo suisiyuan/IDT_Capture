@@ -13,8 +13,11 @@
 #define ENCODER_IP			settings->value(ENCODER_IP_REG).toString()
 #define ENCODER_TCP_PORT	settings->value(ENCODER_TCP_REG).toInt()
 
-
+// Waiting time
 #define WAITING_TIME		1000
+
+// battery query interval
+#define QUERY_INTERVAL    10000
 
 
 #endif // NETWORK_H

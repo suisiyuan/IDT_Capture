@@ -11,7 +11,8 @@ echo -- QTDIR set to %QTDIR%
 set PATH=%QTDIR%\bin;%PATH%
 echo -- Added %QTDIR%\bin to PATH
 
-call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86
+set VS_DIR="C:\Program Files (x86)\Microsoft Visual Studio 14.0"
+call %VS_DIR%\VC\vcvarsall.bat x86
 
 echo --generate DCTA VS project
 cd ..

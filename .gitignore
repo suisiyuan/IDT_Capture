@@ -39,3 +39,8 @@ CMakeLists.txt.user
 
 debug/*
 release/*
+
+.vs/
+*.sln
+*.vcxproj
+*.vcxproj.filters

@@ -13,12 +13,16 @@ TEMPLATE = app
 
 
 SOURCES +=  main.cpp\
-            CaptureWidget.cpp \
+            MainWidget.cpp \
+            ConfigWidget.cpp \
+            StitchWidget.cpp \
             TcpMsg.cpp \
             TcpSendMsg.cpp \
             TcpReceiveMsg.cpp
 
-HEADERS  += CaptureWidget.h \
+HEADERS  += MainWidget.h \
+            ConfigWidget.h \
+            StitchWidget.h \
             app.h \
             network.h \
             TcpMsg.h \
@@ -26,20 +30,24 @@ HEADERS  += CaptureWidget.h \
             TcpReceiveMsg.h \
             UdpMsg.h
 
-FORMS    += desktop.ui \
-    config.ui \
-    stitch.ui
+FORMS    += main.ui \
+            config.ui \
+            stitch.ui
 
-#vlc-qt win32 msvc2015
+
 win32 {
-    INCLUDEPATH += ./3rd/VLC-Qt_1.1.0_win32_msvc2015/include
-    CONFIG(release, debug|release): LIBS += -L./3rd/VLC-Qt_1.1.0_win32_msvc2015/lib/ -lVLCQtCore -lVLCQtWidgets
-    else:CONFIG(debug, debug|release): LIBS += -L./3rd/VLC-Qt_1.1.0_win32_msvc2015/lib/ -lVLCQtCored -lVLCQtWidgetsd
+#vlc-qt
+    INCLUDEPATH += ./3rd/vlc-qt/include
+    CONFIG(release, debug|release): LIBS += -L./3rd/vlc-qt/lib/ -lVLCQtCore -lVLCQtWidgets
+    else:CONFIG(debug, debug|release): LIBS += -L./3rd/vlc-qt/lib/ -lVLCQtCored -lVLCQtWidgetsd
+
+#crc16
+    INCLUDEPATH += ./3rd/crc16/include
+    CONFIG(release, debug|release): LIBS += -L./3rd/crc16/lib/ -lcrc
+    else:CONFIG(debug, debug|release): LIBS += -L./3rd/crc16/lib/ -lcrcd
 }
 
 
-#crc16
-INCLUDEPATH += ./3rd/CRC16/include
-win32:LIBS += -L./3rd/CRC16/lib/win32 -lcrc
+
 
 

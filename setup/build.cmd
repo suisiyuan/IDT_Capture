@@ -14,26 +14,18 @@ echo -- Added %QTDIR%\bin to PATH
 set VS_DIR="C:\Program Files (x86)\Microsoft Visual Studio 14.0"
 call %VS_DIR%\VC\vcvarsall.bat x86
 
-set CURRENT_DATE=%date:~0,4%-%date:~5,2%-%date:~8,2%
-echo --CURRENT_DATE set to %CURRENT_DATE%
+set CURRENT_TIME="%date:~0,4%-%date:~5,2%-%date:~8,2% %time:~0,2%.%time:~3,2%.%time:~6,2%"
+echo --CURRENT_TIME set to %CURRENT_TIME%
 
 mkdir build
 cd build
-mkdir %CURRENT_DATE%
-cd %CURRENT_DATE%
+mkdir %CURRENT_TIME%
+cd %CURRENT_TIME%
 
-mkdir src
-mkdir release
 
-cd src
 set GIT_DIR="C:\Program Files\Git\bin"
 %GIT_DIR%\git.exe clone git@github.com:suisiyuan/IDT_Capture.git -b qt
-set SRC="%cd%\IDT_Capture"
-echo --SRC set to %SRC%
-cd ..
-
-cd release
-%QTDIR%\bin\qmake %SRC%\IDT_Capture.pro
+cd IDT_Capture
+%QTDIR%\bin\qmake .\IDT_Capture.pro
 nmake release /nologo
-cd ..
 

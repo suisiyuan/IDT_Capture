@@ -7,10 +7,12 @@
 #include <QTcpSocket>
 #include <QUdpSocket>
 #include <QMessageBox>
+#include <QDateTime>
 
 #include <VLCQtCore/Common.h>
 #include <VLCQtCore/Instance.h>
 #include <VLCQtCore/Media.h>
+#include <VLCQtCore/MediaList.h>
 #include <VLCQtCore/MediaPlayer.h>
 
 #include "ui_main.h"
@@ -34,23 +36,30 @@ class MainWidget : public QWidget
 public:
     MainWidget(QWidget *parent = Q_NULLPTR);
 
+public slots:
+    void startRecord();
+    void stopRecord();
+
 private:
 	Ui::MainWidget ui;
 
 	ConfigWidget *configWidget;
 	StitchWidget *stitchWidget;
 
-
 	QUdpSocket *udpHisi;
 	QTcpSocket *tcpHisi, *tcpEncoder;
 	QSettings *settings;
 	QTimer *queryTimer;
 
+    QDir *currentDir;
+
+
+    // 视频播放器相关
 	VlcInstance *_instance;
-	VlcMedia *_media;
+    VlcMedia *_media, recordMedia;
 	VlcMediaPlayer *_player;
 	
-
+    // 判断套接字状态
 	bool isConnected(QAbstractSocket *);
 	bool isDisconnected(QAbstractSocket *);
 

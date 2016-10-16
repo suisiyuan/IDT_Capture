@@ -18,7 +18,8 @@ SOURCES +=  main.cpp\
             StitchWidget.cpp \
             TcpMsg.cpp \
             TcpSendMsg.cpp \
-            TcpReceiveMsg.cpp
+            TcpReceiveMsg.cpp \
+    OptionDialog.cpp
 
 HEADERS  += MainWidget.h \
             ConfigWidget.h \
@@ -28,11 +29,13 @@ HEADERS  += MainWidget.h \
             TcpMsg.h \
             TcpSendMsg.h \
             TcpReceiveMsg.h \
-            UdpMsg.h
+            UdpMsg.h \
+    OptionDialog.h
 
 FORMS    += main.ui \
             config.ui \
-            stitch.ui
+            stitch.ui \
+            option.ui
 
 
 win32 {

@@ -2,19 +2,22 @@
 
 MainWidget::MainWidget(QWidget *parent) : 
 	QWidget(parent),
-	configWidget(Q_NULLPTR),
+    configWidget(new ConfigWidget(this)),
 	stitchWidget(Q_NULLPTR),
-	_instance(Q_NULLPTR),
-	_media(Q_NULLPTR),
-	_player(Q_NULLPTR),
 	udpHisi(new QUdpSocket()),
 	tcpHisi(new QTcpSocket()),
 	tcpEncoder(new QTcpSocket()),
 	settings(new QSettings()),
-	queryTimer(new QTimer())
+    queryTimer(new QTimer()),
+    currentDir(Q_NULLPTR),
+    recordMedia(Q_NULLPTR)
 {
 	ui.setupUi(this);
 	
+    // 配置界面
+    ui.mainLayout->addWidget(configWidget, 1, 2);
+    configWidget->hide();
+
 	// 注册变量
 	qRegisterMetaType<QAbstractSocket::SocketState>();
 
@@ -29,26 +32,12 @@ MainWidget::MainWidget(QWidget *parent) :
 
 	QObject::connect(queryTimer, SIGNAL(timeout()), this, SLOT(queryBattery()));
 
-
-	// 注册表
-	if (settings->childKeys().isEmpty())
-	{
-		settings->setValue(HISI_IP_REG, QVariant("192.168.1.10"));
-		settings->setValue(HISI_TCP_REG, QVariant(20108));
-		settings->setValue(HISI_UDP_REG, QVariant(8888));
-		settings->setValue(HISI_VIDEO_REG, QVariant(6880));
-		settings->setValue(HISI_VIDEO_NAME_REG, QVariant("test.264"));
-		settings->setValue(ENCODER_IP_REG, QVariant("192.168.1.7"));
-		settings->setValue(ENCODER_TCP_REG, QVariant(20108));
-	}
-
 	// 视频播放器
 	_instance = new VlcInstance(VlcCommon::args(), this);
 	_media = new VlcMedia(HISI_VIDEO_URL, _instance);
 	_player = new VlcMediaPlayer(_instance);
 	_player->setVideoWidget(ui.video);
 	ui.video->setMediaPlayer(_player);
-
 }
 
 
@@ -75,13 +64,15 @@ void MainWidget::on_connectButton_clicked()
 	if (tcpHisi->waitForConnected(WAITING_TIME) && tcpEncoder->waitForConnected(WAITING_TIME))
 	{
 		udpHisi->bind(QHostAddress::AnyIPv4, HISI_UDP_PORT);
+		
 		_player->open(_media);
+		
+
 		ui.connectButton->setEnabled(false);
 		ui.disconnectButton->setEnabled(true);
 		ui.startButton->setEnabled(true);
 
-		configWidget = new ConfigWidget(this);
-		ui.mainLayout->addWidget(configWidget, 1, 2);
+        configWidget->show();
 
 		queryTimer->start(QUERY_INTERVAL);
 		queryBattery();
@@ -118,15 +109,12 @@ void MainWidget::on_disconnectButton_clicked()
 	ui.startButton->setEnabled(false);
 	ui.stopButton->setEnabled(false);
 
-	if (configWidget != Q_NULLPTR) {
-		delete configWidget;
-		configWidget = Q_NULLPTR;
-	}
+    configWidget->hide();
 		
-	if (stitchWidget != Q_NULLPTR) {
-		delete stitchWidget;
-		stitchWidget = Q_NULLPTR;
-	}
+    if (stitchWidget != Q_NULLPTR) {
+        delete stitchWidget;
+        stitchWidget = Q_NULLPTR;
+    }
 		
 
 	queryTimer->stop();
@@ -136,18 +124,22 @@ void MainWidget::on_disconnectButton_clicked()
 void MainWidget::on_startButton_clicked()
 {
 	TcpSendMsg startMsg(TcpMsg::START);
-	tcpEncoder->write(startMsg.getSentData().data(), startMsg.getSentData().length());
+	tcpEncoder->write(startMsg.getSentData().data(), startMsg.getSentData().length());  
 
+    // 设置控制按钮
 	ui.startButton->setEnabled(false);
 	ui.stopButton->setEnabled(true);
 
-	if (configWidget != Q_NULLPTR) {
-		delete configWidget;
-		configWidget = Q_NULLPTR;
-	}
+    // 切换界面
+    configWidget->hide();
 	stitchWidget = new StitchWidget(this);
-	ui.mainLayout->addWidget(stitchWidget, 1, 2);
-	
+	ui.mainLayout->addWidget(stitchWidget, 1, 2);   
+
+    // 创建工程文件夹
+    QString currentTime = QDateTime::currentDateTime().toString("yyyy-MM-dd HH.mm.ss");
+    QDir dir(configWidget->savePath);
+    dir.mkdir(currentTime);
+    currentDir = new QDir(dir.filePath(currentTime));
 }
 
 // 停止
@@ -163,8 +155,15 @@ void MainWidget::on_stopButton_clicked()
 		delete stitchWidget;
 		stitchWidget = Q_NULLPTR;
 	}
-	configWidget = new ConfigWidget(this);
-	ui.mainLayout->addWidget(configWidget, 1, 2);
+
+    configWidget->show();
+
+    // 销毁工程文件夹指针
+    if (currentDir != Q_NULLPTR)
+    {
+        delete currentDir;
+        currentDir = Q_NULLPTR;
+    }
 }
 
 
@@ -223,7 +222,7 @@ void MainWidget::handleHisiUdpData()
 	{
 		QHostAddress sender;
 		quint16 senderPort;
-		UDP_DATA data = { 0,{ 0 }, 0.0, 0.0, 0.0 };
+		UDP_DATA data = {0, { 0 }, 0.0, 0.0, 0.0};
 
 		udpHisi->readDatagram((char *)&data, sizeof(data), &sender, &senderPort);
 
@@ -278,7 +277,7 @@ void MainWidget::handleEncoderTcpData()
 		case TcpMsg::BATTERY_RSP:
 		{
 			quint8 battery = *msg.getReceivedData().data();
-			//qDebug() << battery;
+            configWidget->setBatteryBar(battery);
 		}
 
 		default:
@@ -294,4 +293,28 @@ void MainWidget::queryBattery()
 	tcpEncoder->write(queryMsg.getSentData().data(), queryMsg.getSentData().length());
 }
 
+
+// 开始录制视频
+void MainWidget::startRecord()
+{
+    qDebug() << "start record";
+    recordMedia = new VlcMedia(HISI_VIDEO_URL, _instance);
+    QString currentTime = QDateTime::currentDateTime().toString("yyyy-MM-dd HH.mm.ss");
+    recordMedia->record(currentTime, currentDir->path(), Vlc::Mux::MP4, true);
+    _player->open(recordMedia);
+}
+
+
+// 停止录制视频
+void MainWidget::stopRecord()
+{
+    qDebug() << "stop record";
+    _player->open(_media);
+    if (recordMedia != Q_NULLPTR)
+    {
+        delete recordMedia;
+        recordMedia = Q_NULLPTR;
+    }
+
+}
 

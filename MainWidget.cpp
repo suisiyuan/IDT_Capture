@@ -141,8 +141,8 @@ void MainWidget::on_startButton_clicked()
 
     // 切换界面
     configWidget->hide();
-	stitchWidget = new StitchWidget(this);
-	ui.mainLayout->addWidget(stitchWidget, 1, 2);   
+    stitchWidget = new StitchWidget(this);
+    ui.mainLayout->addWidget(stitchWidget, 1, 2);
 
     // 创建工程文件夹
     QString currentTime = QDateTime::currentDateTime().toString("yyyy-MM-dd HH.mm.ss");
@@ -161,10 +161,10 @@ void MainWidget::on_stopButton_clicked()
 	ui.stopButton->setEnabled(false);
     ui.disconnectButton->setEnabled(true);
 	
-	if (stitchWidget != Q_NULLPTR) {
-		delete stitchWidget;
-		stitchWidget = Q_NULLPTR;
-	}
+    if (stitchWidget != Q_NULLPTR) {
+        delete stitchWidget;
+        stitchWidget = Q_NULLPTR;
+    }
 
     configWidget->show();
 
@@ -279,8 +279,9 @@ void MainWidget::handleEncoderTcpData()
 			break;
 		case TcpMsg::HEIGHT:
 		{
-			qint32 height = *(qint32 *)(msg.getReceivedData().data());
+            qint32 height = qFromBigEndian<qint32>((uchar *)msg.getReceivedData().data());
 			//qDebug() << "Height" << height;
+            emit emitHeight(height);
 			break;
 		}
 			
@@ -288,6 +289,7 @@ void MainWidget::handleEncoderTcpData()
 		{
 			quint8 battery = *msg.getReceivedData().data();
             emit emitBattery(battery);
+            break;
 		}
 
 		default:
@@ -327,3 +329,4 @@ void MainWidget::takeSnapshot()
 {
     _player->video()->takeSnapshot(currentDir->filePath(QDateTime::currentDateTime().toString("截图_yyyy-MM-dd_HH.mm.ss.png")));
 }
+

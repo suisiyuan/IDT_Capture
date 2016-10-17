@@ -12,6 +12,9 @@ StitchWidget::StitchWidget(QWidget *parent) :
     // 截图
     QObject::connect(ui.snapshotButton, SIGNAL(clicked()), parent, SLOT(takeSnapshot()));
     QObject::connect(parent, SIGNAL(snapshotTaken(QString)), this, SLOT(on_snapshot_taken(QString)));
+
+    // 高度
+    QObject::connect(parent, SIGNAL(emitHeight(qint32)), this, SLOT(getHeight(qint32)));
 }
 
 StitchWidget::~StitchWidget()
@@ -56,4 +59,10 @@ void StitchWidget::on_snapshot_taken(QString filename)
     qDebug() << "snapshot:" << filename;
     QImage img(filename, "PNG");
     qDebug() << img.width() << img.height();
+}
+
+// 接收高度
+void StitchWidget::getHeight(qint32 height)
+{
+    qDebug() << "height:" << height;
 }

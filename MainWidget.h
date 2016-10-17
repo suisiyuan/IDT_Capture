@@ -8,7 +8,7 @@
 #include <QUdpSocket>
 #include <QMessageBox>
 #include <QDateTime>
-#include <QList>
+#include <QtEndian>
 
 #include <VLCQtCore/Common.h>
 #include <VLCQtCore/Instance.h>
@@ -67,8 +67,6 @@ private:
 	bool isConnected(QAbstractSocket *);
 	bool isDisconnected(QAbstractSocket *);
 
-
-
 private slots:
 	void on_connectButton_clicked();
 	void on_disconnectButton_clicked();
@@ -89,7 +87,7 @@ private slots:
 
 signals:
     void emitBattery(quint8);
-    void emitHeight(quint32);
+    void emitHeight(qint32);
     void snapshotTaken(QString);
 
 

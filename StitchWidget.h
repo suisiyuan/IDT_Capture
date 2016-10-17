@@ -27,6 +27,8 @@ private slots:
 
     void on_snapshot_taken(QString filename);
 
+    void getHeight(qint32);
+
 signals:
     void startRecord();
     void stopRecord();

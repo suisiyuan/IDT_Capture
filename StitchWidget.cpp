@@ -8,6 +8,10 @@ StitchWidget::StitchWidget(QWidget *parent) :
 
     QObject::connect(this, SIGNAL(startRecord()), parent, SLOT(startRecord()));
     QObject::connect(this, SIGNAL(stopRecord()), parent, SLOT(stopRecord()));
+
+    // 截图
+    QObject::connect(ui.snapshotButton, SIGNAL(clicked()), parent, SLOT(takeSnapshot()));
+    QObject::connect(parent, SIGNAL(snapshotTaken(QString)), this, SLOT(on_snapshot_taken(QString)));
 }
 
 StitchWidget::~StitchWidget()
@@ -46,4 +50,10 @@ void StitchWidget::on_recordButton_clicked()
 	}
 }
 
-
+// 截图完成后
+void StitchWidget::on_snapshot_taken(QString filename)
+{
+    qDebug() << "snapshot:" << filename;
+    QImage img(filename, "PNG");
+    qDebug() << img.width() << img.height();
+}

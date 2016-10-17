@@ -32,12 +32,17 @@ MainWidget::MainWidget(QWidget *parent) :
 
 	QObject::connect(queryTimer, SIGNAL(timeout()), this, SLOT(queryBattery()));
 
+
+
 	// 视频播放器
 	_instance = new VlcInstance(VlcCommon::args(), this);
 	_media = new VlcMedia(HISI_VIDEO_URL, _instance);
+    recordMedia = new VlcMedia(HISI_VIDEO_URL, _instance);
 	_player = new VlcMediaPlayer(_instance);
 	_player->setVideoWidget(ui.video);
 	ui.video->setMediaPlayer(_player);
+
+    QObject::connect(_player, SIGNAL(snapshotTaken(QString)), this, SIGNAL(snapshotTaken(QString)));
 }
 
 
@@ -76,6 +81,9 @@ void MainWidget::on_connectButton_clicked()
 
 		queryTimer->start(QUERY_INTERVAL);
 		queryBattery();
+
+        qDebug() << "track:" << _player->video()->trackCount();
+
 	}
 	else
 	{
@@ -129,6 +137,7 @@ void MainWidget::on_startButton_clicked()
     // 设置控制按钮
 	ui.startButton->setEnabled(false);
 	ui.stopButton->setEnabled(true);
+    ui.disconnectButton->setEnabled(false);
 
     // 切换界面
     configWidget->hide();
@@ -150,6 +159,7 @@ void MainWidget::on_stopButton_clicked()
 
 	ui.startButton->setEnabled(true);
 	ui.stopButton->setEnabled(false);
+    ui.disconnectButton->setEnabled(true);
 	
 	if (stitchWidget != Q_NULLPTR) {
 		delete stitchWidget;
@@ -277,7 +287,7 @@ void MainWidget::handleEncoderTcpData()
 		case TcpMsg::BATTERY_RSP:
 		{
 			quint8 battery = *msg.getReceivedData().data();
-            configWidget->setBatteryBar(battery);
+            emit emitBattery(battery);
 		}
 
 		default:
@@ -298,7 +308,6 @@ void MainWidget::queryBattery()
 void MainWidget::startRecord()
 {
     qDebug() << "start record";
-    recordMedia = new VlcMedia(HISI_VIDEO_URL, _instance);
     QString currentTime = QDateTime::currentDateTime().toString("yyyy-MM-dd HH.mm.ss");
     recordMedia->record(currentTime, currentDir->path(), Vlc::Mux::MP4, true);
     _player->open(recordMedia);
@@ -310,11 +319,11 @@ void MainWidget::stopRecord()
 {
     qDebug() << "stop record";
     _player->open(_media);
-    if (recordMedia != Q_NULLPTR)
-    {
-        delete recordMedia;
-        recordMedia = Q_NULLPTR;
-    }
-
 }
 
+
+// 截图
+void MainWidget::takeSnapshot()
+{
+    _player->video()->takeSnapshot(currentDir->filePath(QDateTime::currentDateTime().toString("截图_yyyy-MM-dd_HH.mm.ss.png")));
+}

@@ -4,12 +4,12 @@ ConfigWidget::ConfigWidget(QWidget *parent) :
 	QWidget(parent),
     optionDialog(new OptionDialog(this)),
     settings(new QSettings()),
-    enableBack(false),
-	enableFast(false),
     savePath(DEFAULT_FOLDER),
     isLocked(true)
 {
 	ui.setupUi(this);
+
+    QObject::connect(parent, SIGNAL(emitBattery(quint8)), this, SLOT(setBatteryBar(quint8)));
 }
 
 // 配置属性
@@ -18,8 +18,6 @@ void ConfigWidget::on_optionButton_clicked()
     qint8 result = optionDialog->exec();
     if (result)
     {
-        enableBack = optionDialog->getEnableBack();
-        enableFast = optionDialog->getEnableFast();
         savePath = optionDialog->getSavePath();
         if (optionDialog->getSetDefalt())
             settings->setValue("savePath", QVariant(savePath));
@@ -75,4 +73,11 @@ void ConfigWidget::on_leftButton_clicked()
 void ConfigWidget::on_rightButton_clicked()
 {
 
+}
+
+// 设置电量
+void ConfigWidget::setBatteryBar(quint8 battery)
+{
+    qDebug() << "Set battery";
+    ui.batteryBar->setValue(battery);
 }

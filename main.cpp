@@ -12,6 +12,6 @@ int main(int argc, char *argv[])
 	QApplication::setOrganizationDomain(COMPANY_URL);
 
     MainWidget w;
-    w.show();
+    w.showMaximized();
     return a.exec();
 }

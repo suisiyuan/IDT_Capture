@@ -8,10 +8,12 @@
 #include <QUdpSocket>
 #include <QMessageBox>
 #include <QDateTime>
+#include <QList>
 
 #include <VLCQtCore/Common.h>
 #include <VLCQtCore/Instance.h>
 #include <VLCQtCore/Media.h>
+#include <VLCQtCore/Video.h>
 #include <VLCQtCore/MediaList.h>
 #include <VLCQtCore/MediaPlayer.h>
 
@@ -36,9 +38,11 @@ class MainWidget : public QWidget
 public:
     MainWidget(QWidget *parent = Q_NULLPTR);
 
+
 public slots:
     void startRecord();
     void stopRecord();
+    void takeSnapshot();
 
 private:
 	Ui::MainWidget ui;
@@ -82,5 +86,11 @@ private slots:
 	void handleEncoderTcpData();
 
 	void queryBattery();
+
+signals:
+    void emitBattery(quint8);
+    void emitHeight(quint32);
+    void snapshotTaken(QString);
+
 
 };

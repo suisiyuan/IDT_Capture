@@ -18,8 +18,6 @@ class OptionDialog : public QDialog
 public:
 	OptionDialog(QWidget *parent = Q_NULLPTR);
 
-    bool getEnableBack() {return ui.backCheck->isChecked();}
-    bool getEnableFast() {return ui.fastCheck->isChecked();}
     QString getSavePath() {return ui.savePathLabel->text();}
     bool getSetDefalt() {return ui.defaultCheck->isChecked();}
 

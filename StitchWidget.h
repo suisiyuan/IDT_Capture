@@ -2,6 +2,7 @@
 
 #include <QWidget>
 #include <QDebug>
+#include <QImage>
 
 #include "ui_stitch.h"
 
@@ -24,7 +25,10 @@ private slots:
 	void on_nextButton_clicked();
 	void on_recordButton_clicked();
 
+    void on_snapshot_taken(QString filename);
+
 signals:
     void startRecord();
     void stopRecord();
+    void takeSnapshot();
 };

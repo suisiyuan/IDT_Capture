@@ -16,11 +16,7 @@ class ConfigWidget : public QWidget
 public:
 	ConfigWidget(QWidget *parent = Q_NULLPTR);
 
-	bool enableBack;
-    bool enableFast;
     QString savePath;
-
-    void setBatteryBar(quint8 battery) {ui.batteryBar->setValue(battery);}
 
 private:
 	Ui::ConfigWidget ui;
@@ -40,4 +36,5 @@ private slots:
 	void on_leftButton_clicked();
 	void on_rightButton_clicked();
 
+    void setBatteryBar(quint8 battery);
 };

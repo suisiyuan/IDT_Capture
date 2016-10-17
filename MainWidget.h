@@ -56,7 +56,7 @@ private:
 
     // 视频播放器相关
 	VlcInstance *_instance;
-    VlcMedia *_media, recordMedia;
+    VlcMedia *_media, *recordMedia;
 	VlcMediaPlayer *_player;
 	
     // 判断套接字状态

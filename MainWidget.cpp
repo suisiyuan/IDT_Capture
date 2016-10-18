@@ -1,5 +1,12 @@
 #include "MainWidget.h"
 
+Mat videobuf(720, 1280, CV_8UC3);
+void* lock(void *data, void **p_pixels)
+{
+    *p_pixels = (void *)(videobuf.data);
+    return NULL;
+}
+
 MainWidget::MainWidget(QWidget *parent) : 
 	QWidget(parent),
     configWidget(new ConfigWidget(this)),
@@ -33,8 +40,6 @@ MainWidget::MainWidget(QWidget *parent) :
 	QObject::connect(queryTimer, SIGNAL(timeout()), this, SLOT(queryBattery()));
 
 
-
-	// 视频播放器
 	_instance = new VlcInstance(VlcCommon::args(), this);
 	_media = new VlcMedia(HISI_VIDEO_URL, _instance);
     recordMedia = new VlcMedia(HISI_VIDEO_URL, _instance);
@@ -42,8 +47,13 @@ MainWidget::MainWidget(QWidget *parent) :
 	_player->setVideoWidget(ui.video);
 	ui.video->setMediaPlayer(_player);
 
+    libvlc_video_set_format(_player->core(), "RV24", 1280, 720, 1280* 3);
+    libvlc_video_set_callbacks(_player->core(), lock, NULL, NULL, NULL);
+
     QObject::connect(_player, SIGNAL(snapshotTaken(QString)), this, SIGNAL(snapshotTaken(QString)));
 }
+
+
 
 
 // 判断套接字是否已连接
@@ -71,7 +81,7 @@ void MainWidget::on_connectButton_clicked()
 		udpHisi->bind(QHostAddress::AnyIPv4, HISI_UDP_PORT);
 		
 		_player->open(_media);
-		
+
 
 		ui.connectButton->setEnabled(false);
 		ui.disconnectButton->setEnabled(true);
@@ -327,6 +337,6 @@ void MainWidget::stopRecord()
 // 截图
 void MainWidget::takeSnapshot()
 {
-    _player->video()->takeSnapshot(currentDir->filePath(QDateTime::currentDateTime().toString("截图_yyyy-MM-dd_HH.mm.ss.png")));
+    _player->video()->takeSnapshot(currentDir->filePath(QDateTime::currentDateTime().toString("yyyy-MM-dd_HH.mm.ss.png")));
 }
 

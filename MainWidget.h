@@ -17,6 +17,12 @@
 #include <VLCQtCore/MediaList.h>
 #include <VLCQtCore/MediaPlayer.h>
 
+#include "vlc/libvlc.h"
+#include "vlc/libvlc_media.h"
+#include "vlc/libvlc_media_player.h"
+
+#include "opencv.hpp"
+
 #include "ui_main.h"
 
 #include "ConfigWidget.h"
@@ -28,7 +34,7 @@
 #include "TcpSendMsg.h"
 #include "TcpReceiveMsg.h"
 
-
+using namespace cv;
 
 
 class MainWidget : public QWidget
@@ -58,6 +64,8 @@ private:
     QDir *currentDir;
 
 
+
+
     // 视频播放器相关
 	VlcInstance *_instance;
     VlcMedia *_media, *recordMedia;
@@ -66,6 +74,9 @@ private:
     // 判断套接字状态
 	bool isConnected(QAbstractSocket *);
 	bool isDisconnected(QAbstractSocket *);
+
+
+
 
 private slots:
 	void on_connectButton_clicked();

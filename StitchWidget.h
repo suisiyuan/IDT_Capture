@@ -6,6 +6,10 @@
 
 #include "ui_stitch.h"
 
+#include "opencv.hpp"
+
+using namespace cv;
+
 class StitchWidget : public QWidget
 {
 	Q_OBJECT
@@ -26,7 +30,6 @@ private slots:
 	void on_recordButton_clicked();
 
     void on_snapshot_taken(QString filename);
-
     void getHeight(qint32);
 
 signals:

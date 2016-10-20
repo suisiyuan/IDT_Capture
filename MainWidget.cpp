@@ -1,12 +1,5 @@
 #include "MainWidget.h"
 
-Mat videobuf(720, 1280, CV_8UC3);
-void* lock(void *data, void **p_pixels)
-{
-    *p_pixels = (void *)(videobuf.data);
-    return NULL;
-}
-
 MainWidget::MainWidget(QWidget *parent) : 
 	QWidget(parent),
     configWidget(new ConfigWidget(this)),
@@ -16,14 +9,15 @@ MainWidget::MainWidget(QWidget *parent) :
 	tcpEncoder(new QTcpSocket()),
 	settings(new QSettings()),
     queryTimer(new QTimer()),
-    currentDir(Q_NULLPTR),
-    recordMedia(Q_NULLPTR)
+    currentDir(Q_NULLPTR)
 {
 	ui.setupUi(this);
-	
+
     // 配置界面
-    ui.mainLayout->addWidget(configWidget, 1, 2);
-    configWidget->hide();
+    ui.frame->setFrameStyle(QFrame::Panel | QFrame::Raised);
+    ui.frame->setLineWidth(2);
+    ui.frame->layout()->addWidget(configWidget);
+//    configWidget->hide();
 
 	// 注册变量
 	qRegisterMetaType<QAbstractSocket::SocketState>();
@@ -39,18 +33,6 @@ MainWidget::MainWidget(QWidget *parent) :
 
 	QObject::connect(queryTimer, SIGNAL(timeout()), this, SLOT(queryBattery()));
 
-
-	_instance = new VlcInstance(VlcCommon::args(), this);
-	_media = new VlcMedia(HISI_VIDEO_URL, _instance);
-    recordMedia = new VlcMedia(HISI_VIDEO_URL, _instance);
-	_player = new VlcMediaPlayer(_instance);
-	_player->setVideoWidget(ui.video);
-	ui.video->setMediaPlayer(_player);
-
-    libvlc_video_set_format(_player->core(), "RV24", 1280, 720, 1280* 3);
-    libvlc_video_set_callbacks(_player->core(), lock, NULL, NULL, NULL);
-
-    QObject::connect(_player, SIGNAL(snapshotTaken(QString)), this, SIGNAL(snapshotTaken(QString)));
 }
 
 
@@ -80,19 +62,17 @@ void MainWidget::on_connectButton_clicked()
 	{
 		udpHisi->bind(QHostAddress::AnyIPv4, HISI_UDP_PORT);
 		
-		_player->open(_media);
+        emit play();
 
 
 		ui.connectButton->setEnabled(false);
 		ui.disconnectButton->setEnabled(true);
 		ui.startButton->setEnabled(true);
 
-        configWidget->show();
 
 		queryTimer->start(QUERY_INTERVAL);
 		queryBattery();
 
-        qDebug() << "track:" << _player->video()->trackCount();
 
 	}
 	else
@@ -117,7 +97,8 @@ void MainWidget::on_disconnectButton_clicked()
 	tcpHisi->close();
 	tcpEncoder->close();
 	udpHisi->close();
-	_player->stop();
+
+    emit stop();
 
 	isDisconnected(tcpHisi) || tcpHisi->waitForDisconnected(WAITING_TIME);
 	isDisconnected(tcpEncoder) || tcpEncoder->waitForDisconnected(WAITING_TIME);
@@ -127,7 +108,6 @@ void MainWidget::on_disconnectButton_clicked()
 	ui.startButton->setEnabled(false);
 	ui.stopButton->setEnabled(false);
 
-    configWidget->hide();
 		
     if (stitchWidget != Q_NULLPTR) {
         delete stitchWidget;
@@ -152,7 +132,7 @@ void MainWidget::on_startButton_clicked()
     // 切换界面
     configWidget->hide();
     stitchWidget = new StitchWidget(this);
-    ui.mainLayout->addWidget(stitchWidget, 1, 2);
+    ui.frame->layout()->addWidget(stitchWidget);
 
     // 创建工程文件夹
     QString currentTime = QDateTime::currentDateTime().toString("yyyy-MM-dd HH.mm.ss");
@@ -319,24 +299,18 @@ void MainWidget::queryBattery()
 // 开始录制视频
 void MainWidget::startRecord()
 {
-    qDebug() << "start record";
-    QString currentTime = QDateTime::currentDateTime().toString("yyyy-MM-dd HH.mm.ss");
-    recordMedia->record(currentTime, currentDir->path(), Vlc::Mux::MP4, true);
-    _player->open(recordMedia);
+    emit record(*currentDir);
 }
 
 
 // 停止录制视频
 void MainWidget::stopRecord()
 {
-    qDebug() << "stop record";
-    _player->open(_media);
+	emit endRecord();
 }
 
-
-// 截图
 void MainWidget::takeSnapshot()
 {
-    _player->video()->takeSnapshot(currentDir->filePath(QDateTime::currentDateTime().toString("yyyy-MM-dd_HH.mm.ss.png")));
+    emit snapshot(*currentDir);
 }
 

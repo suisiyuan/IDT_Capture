@@ -19,7 +19,9 @@ SOURCES +=  main.cpp\
             TcpMsg.cpp \
             TcpSendMsg.cpp \
             TcpReceiveMsg.cpp \
-            OptionDialog.cpp
+            OptionDialog.cpp \
+            VideoOutput.cpp \
+            crc16/crc.cpp
 
 HEADERS  += MainWidget.h \
             ConfigWidget.h \
@@ -30,31 +32,24 @@ HEADERS  += MainWidget.h \
             TcpSendMsg.h \
             TcpReceiveMsg.h \
             UdpMsg.h \
-            OptionDialog.h
+            OptionDialog.h \
+            VideoOutput.h \
+            crc16/crc.h
 
 FORMS    += main.ui \
             config.ui \
             stitch.ui \
             option.ui
 
-
 win32 {
-#vlc-qt
-    INCLUDEPATH += ./3rd/vlc-qt/include
-    CONFIG(release, debug|release): LIBS += -L./3rd/vlc-qt/lib/ -lVLCQtCore -lVLCQtWidgets -llibvlc -llibvlccore
-    else:CONFIG(debug, debug|release): LIBS += -L./3rd/vlc-qt/lib/ -lVLCQtCored -lVLCQtWidgetsd -llibvlc -llibvlccore
-
-#crc16
-    INCLUDEPATH += ./3rd/crc16/include
-    CONFIG(release, debug|release): LIBS += -L./3rd/crc16/lib/ -lcrc
-    else:CONFIG(debug, debug|release): LIBS += -L./3rd/crc16/lib/ -lcrcd
-
 #opencv3
-    INCLUDEPATH += $$(OPENCV3_DIR)/include \
-                   $$(OPENCV3_DIR)/include/opencv \
-                   $$(OPENCV3_DIR)/include/opencv2
-    CONFIG(release, debug|release): LIBS += -L$$(OPENCV3_DIR)/x86/vc14/lib/ -lopencv_core310 -lopencv_highgui310 -lopencv_imgcodecs310
-    else:CONFIG(debug, debug|release): LIBS += -L$$(OPENCV3_DIR)/x86/vc14/lib/ -lopencv_core310d -lopencv_highgui310d -lopencv_imgcodecs310d
+    INCLUDEPATH += $$(OPENCV3_DIR)/include
+    CONFIG(release, debug|release): LIBS += -L$$(OPENCV3_DIR)/x86/vc14/lib -lopencv_core310 -lopencv_highgui310 -lopencv_imgcodecs310 -lopencv_imgproc310
+    else:CONFIG(debug, debug|release): LIBS += -L$$(OPENCV3_DIR)/x86/vc14/lib -lopencv_core310d -lopencv_highgui310d -lopencv_imgcodecs310d -lopencv_imgproc310d
+
+#vlc
+    INCLUDEPATH += $$(VLC_DIR)/include
+    LIBS += -L$$(VLC_DIR)/lib -llibvlc -llibvlccore
 }
 
 

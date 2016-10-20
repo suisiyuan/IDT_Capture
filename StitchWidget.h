@@ -5,8 +5,7 @@
 #include <QImage>
 
 #include "ui_stitch.h"
-
-#include "opencv.hpp"
+#include "opencv2/opencv.hpp"
 
 using namespace cv;
 
@@ -29,7 +28,6 @@ private slots:
 	void on_nextButton_clicked();
 	void on_recordButton_clicked();
 
-    void on_snapshot_taken(QString filename);
     void getHeight(qint32);
 
 signals:

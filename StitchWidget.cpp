@@ -1,7 +1,5 @@
 #include "StitchWidget.h"
 
-extern Mat videobuf;
-
 StitchWidget::StitchWidget(QWidget *parent) :
 	QWidget(parent),
 	isRecording(false)
@@ -13,7 +11,6 @@ StitchWidget::StitchWidget(QWidget *parent) :
 
     // 截图
     QObject::connect(ui.snapshotButton, SIGNAL(clicked()), parent, SLOT(takeSnapshot()));
-    QObject::connect(parent, SIGNAL(snapshotTaken(QString)), this, SLOT(on_snapshot_taken(QString)));
 
     // 高度
     QObject::connect(parent, SIGNAL(emitHeight(qint32)), this, SLOT(getHeight(qint32)));
@@ -55,20 +52,8 @@ void StitchWidget::on_recordButton_clicked()
 	}
 }
 
-// 截图完成后
-void StitchWidget::on_snapshot_taken(QString filename)
-{
-
-    filename.replace("\\", "/");
-    qDebug() << "snapshot:" << filename;
-    imwrite(filename.replace(".png", "_opencv.png").toStdString(), videobuf);
-
-
-}
-
 // 接收高度
 void StitchWidget::getHeight(qint32 height)
 {
     //qDebug() << "height:" << height;
-    //qDebug() << videobuf.rows << videobuf.cols;
 }

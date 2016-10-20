@@ -1,5 +1,5 @@
 #include "TcpMsg.h"
-#include "crc.h"
+#include "crc16/crc.h"
 
 
 TcpMsg::TcpMsg() :

@@ -10,18 +10,11 @@
 #include <QDateTime>
 #include <QtEndian>
 
-#include <VLCQtCore/Common.h>
-#include <VLCQtCore/Instance.h>
-#include <VLCQtCore/Media.h>
-#include <VLCQtCore/Video.h>
-#include <VLCQtCore/MediaList.h>
-#include <VLCQtCore/MediaPlayer.h>
-
 #include "vlc/libvlc.h"
 #include "vlc/libvlc_media.h"
 #include "vlc/libvlc_media_player.h"
 
-#include "opencv.hpp"
+#include "opencv2/opencv.hpp"
 
 #include "ui_main.h"
 
@@ -48,29 +41,26 @@ public:
 public slots:
     void startRecord();
     void stopRecord();
-    void takeSnapshot();
 
 private:
 	Ui::MainWidget ui;
 
 	ConfigWidget *configWidget;
-	StitchWidget *stitchWidget;
+    StitchWidget *stitchWidget;
 
 	QUdpSocket *udpHisi;
 	QTcpSocket *tcpHisi, *tcpEncoder;
 	QSettings *settings;
 	QTimer *queryTimer;
-
     QDir *currentDir;
 
 
-
-
     // 视频播放器相关
-	VlcInstance *_instance;
-    VlcMedia *_media, *recordMedia;
-	VlcMediaPlayer *_player;
+    libvlc_instance_t *inst;
+    libvlc_media_player_t *mp;
+    libvlc_media_t *m;
 	
+
     // 判断套接字状态
 	bool isConnected(QAbstractSocket *);
 	bool isDisconnected(QAbstractSocket *);
@@ -96,10 +86,16 @@ private slots:
 
 	void queryBattery();
 
+    void takeSnapshot();
+
 signals:
     void emitBattery(quint8);
     void emitHeight(qint32);
-    void snapshotTaken(QString);
 
-
+    // 视频相关
+    void play();
+    void stop();
+    void snapshot(QDir);
+    void record(QDir);
+	void endRecord();
 };

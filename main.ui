@@ -19,6 +19,10 @@
   <property name="windowTitle">
    <string>智能钻孔电视——采集软件</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="res.qrc">
+    <normaloff>:/res/images/IDT.ico</normaloff>:/res/images/IDT.ico</iconset>
+  </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0" colspan="2">
     <widget class="QLabel" name="appnameLabel">
@@ -69,7 +73,7 @@
       <item>
        <widget class="QLabel" name="companyLabel">
         <property name="text">
-         <string>上海岩联工程技术有限公司</string>
+         <string>华科迅测科技有限公司</string>
         </property>
        </widget>
       </item>
@@ -149,6 +153,8 @@
    <header location="global">VideoOutput.h</header>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="res.qrc"/>
+ </resources>
  <connections/>
 </ui>

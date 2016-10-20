@@ -8,11 +8,7 @@ StitchWidget::StitchWidget(QWidget *parent) :
 
     QObject::connect(this, SIGNAL(startRecord()), parent, SLOT(startRecord()));
     QObject::connect(this, SIGNAL(stopRecord()), parent, SLOT(stopRecord()));
-
-    // 截图
     QObject::connect(ui.snapshotButton, SIGNAL(clicked()), parent, SLOT(takeSnapshot()));
-
-    // 高度
     QObject::connect(parent, SIGNAL(emitHeight(qint32)), this, SLOT(getHeight(qint32)));
 }
 

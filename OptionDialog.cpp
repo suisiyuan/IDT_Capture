@@ -10,6 +10,11 @@ OptionDialog::OptionDialog(QWidget *parent) :
     ui.savePathLabel->setText(settings->value("savePath", QVariant(DEFAULT_FOLDER)).toString());
 }
 
+OptionDialog::~OptionDialog()
+{
+	delete settings;
+}
+
 
 // 浏览并设置保存路径
 void OptionDialog::on_toolButton_clicked()

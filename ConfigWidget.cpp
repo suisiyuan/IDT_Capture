@@ -5,11 +5,23 @@ ConfigWidget::ConfigWidget(QWidget *parent) :
     optionDialog(new OptionDialog(this)),
     settings(new QSettings()),
     savePath(DEFAULT_FOLDER),
-    isLocked(true)
+    isLocked(true),
+	timer(new QTimer())
 {
 	ui.setupUi(this);
 
     QObject::connect(parent, SIGNAL(emitBattery(quint8)), this, SLOT(setBatteryBar(quint8)));
+	QObject::connect(timer, SIGNAL(timeout()), parent, SLOT(queryBattery()));
+
+	timer->start(QUERY_INTERVAL);
+}
+
+ConfigWidget::~ConfigWidget()
+{
+	// 释放空间
+	delete optionDialog;
+	delete settings;
+	delete timer;
 }
 
 // 配置属性

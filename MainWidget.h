@@ -1,7 +1,6 @@
 #pragma once
 
 #include <QDebug>
-#include <QTimer>
 #include <QWidget>
 #include <QSettings>
 #include <QTcpSocket>
@@ -51,7 +50,6 @@ private:
 	QUdpSocket *udpHisi;
 	QTcpSocket *tcpHisi, *tcpEncoder;
 	QSettings *settings;
-	QTimer *queryTimer;
     QDir *currentDir;
 
 

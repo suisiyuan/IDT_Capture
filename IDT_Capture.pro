@@ -9,7 +9,7 @@ QT       += core gui network
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = IDT_Capture
-TEMPLATE = app
+TEMPLATE = vcapp
 
 
 SOURCES +=  main.cpp\
@@ -52,5 +52,7 @@ win32 {
     LIBS += -L$$(VLC_DIR)/lib -llibvlc -llibvlccore
 }
 
+RESOURCES += res.qrc
 
+RC_FILE = res.rc
 

@@ -5,9 +5,7 @@
 #include <QSettings>
 #include <QFileDialog>
 
-
 #include "ui_option.h"
-
 #include "app.h"
 
 
@@ -17,6 +15,7 @@ class OptionDialog : public QDialog
 
 public:
 	OptionDialog(QWidget *parent = Q_NULLPTR);
+	~OptionDialog();
 
     QString getSavePath() {return ui.savePathLabel->text();}
     bool getSetDefalt() {return ui.defaultCheck->isChecked();}

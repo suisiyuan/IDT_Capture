@@ -22,4 +22,4 @@ call %VS_DIR%\VC\vcvarsall.bat x86
 
 echo --generate DCTA VS project
 cd ..
-qmake -t vcapp
+qmake

@@ -4,10 +4,12 @@
 #include <QDialog>
 #include <QDebug>
 #include <QSettings>
+#include <QTimer>
 
 #include "ui_config.h"
 #include "OptionDialog.h"
 #include "app.h"
+#include "network.h"
 
 class ConfigWidget : public QWidget
 {
@@ -15,6 +17,7 @@ class ConfigWidget : public QWidget
 
 public:
 	ConfigWidget(QWidget *parent = Q_NULLPTR);
+	~ConfigWidget();
 
     QString savePath;
 
@@ -23,6 +26,7 @@ private:
 
     OptionDialog *optionDialog;
     QSettings *settings;
+	QTimer *timer;
 
 	bool isLocked;
 	

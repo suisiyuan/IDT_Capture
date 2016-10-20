@@ -19,6 +19,10 @@
   <property name="windowTitle">
    <string>选项设置</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="res.qrc">
+    <normaloff>:/res/images/IDT.ico</normaloff>:/res/images/IDT.ico</iconset>
+  </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="5" column="0" colspan="3">
     <widget class="QDialogButtonBox" name="buttonBox">
@@ -80,7 +84,9 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="res.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>buttonBox</sender>

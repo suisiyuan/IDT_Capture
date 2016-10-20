@@ -8,7 +8,6 @@ MainWidget::MainWidget(QWidget *parent) :
 	tcpHisi(new QTcpSocket()),
 	tcpEncoder(new QTcpSocket()),
 	settings(new QSettings()),
-    queryTimer(new QTimer()),
     currentDir(Q_NULLPTR)
 {
 	ui.setupUi(this);
@@ -30,8 +29,6 @@ MainWidget::MainWidget(QWidget *parent) :
 	QObject::connect(udpHisi, SIGNAL(readyRead()), this, SLOT(handleHisiUdpData()));
 	QObject::connect(tcpHisi, SIGNAL(readyRead()), this, SLOT(handleHisiTcpData()));
 	QObject::connect(tcpEncoder, SIGNAL(readyRead()), this, SLOT(handleEncoderTcpData()));
-
-	QObject::connect(queryTimer, SIGNAL(timeout()), this, SLOT(queryBattery()));
 
 }
 
@@ -69,8 +66,6 @@ void MainWidget::on_connectButton_clicked()
 		ui.disconnectButton->setEnabled(true);
 		ui.startButton->setEnabled(true);
 
-
-		queryTimer->start(QUERY_INTERVAL);
 		queryBattery();
 
 
@@ -113,9 +108,6 @@ void MainWidget::on_disconnectButton_clicked()
         delete stitchWidget;
         stitchWidget = Q_NULLPTR;
     }
-		
-
-	queryTimer->stop();
 }
 
 // 开始
@@ -137,6 +129,9 @@ void MainWidget::on_startButton_clicked()
     // 创建工程文件夹
     QString currentTime = QDateTime::currentDateTime().toString("yyyy-MM-dd HH.mm.ss");
     QDir dir(configWidget->savePath);
+	if (!dir.exists())
+		dir.mkpath(configWidget->savePath);
+	
     dir.mkdir(currentTime);
     currentDir = new QDir(dir.filePath(currentTime));
 }
@@ -291,8 +286,12 @@ void MainWidget::handleEncoderTcpData()
 // 查询电量
 void MainWidget::queryBattery()
 {
-	TcpSendMsg queryMsg(TcpMsg::BATTERY);
-	tcpEncoder->write(queryMsg.getSentData().data(), queryMsg.getSentData().length());
+	if (isConnected(tcpEncoder))
+	{
+		TcpSendMsg queryMsg(TcpMsg::BATTERY);
+		tcpEncoder->write(queryMsg.getSentData().data(), queryMsg.getSentData().length());
+	}
+	
 }
 
 

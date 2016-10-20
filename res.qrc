@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>res/images/IDT.ico</file>
+    </qresource>
+</RCC>

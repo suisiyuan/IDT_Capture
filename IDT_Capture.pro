@@ -4,12 +4,12 @@
 #
 #-------------------------------------------------
 
-QT       += core gui network
+QT       += core gui network sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = IDT_Capture
-TEMPLATE = vcapp
+TEMPLATE = app
 
 
 SOURCES +=  main.cpp\
@@ -21,20 +21,25 @@ SOURCES +=  main.cpp\
             TcpReceiveMsg.cpp \
             OptionDialog.cpp \
             VideoOutput.cpp \
-            crc16/crc.cpp
+            StitchInstance.cpp \
+            crc16/crc.cpp \
+
 
 HEADERS  += MainWidget.h \
             ConfigWidget.h \
             StitchWidget.h \
             app.h \
             network.h \
+            config.h \
             TcpMsg.h \
             TcpSendMsg.h \
             TcpReceiveMsg.h \
             UdpMsg.h \
             OptionDialog.h \
             VideoOutput.h \
-            crc16/crc.h
+            StitchInstance.h \
+            crc16/crc.h \
+
 
 FORMS    += main.ui \
             config.ui \

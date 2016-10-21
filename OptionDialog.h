@@ -23,7 +23,7 @@ public:
 private:
     Ui::OptionDialog ui;
 
-    QSettings *settings;
+    QSettings settings;
 
 private slots:
 	void on_toolButton_clicked();

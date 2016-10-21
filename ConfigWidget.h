@@ -9,7 +9,10 @@
 #include "ui_config.h"
 #include "OptionDialog.h"
 #include "app.h"
+#include "config.h"
 #include "network.h"
+
+
 
 class ConfigWidget : public QWidget
 {
@@ -20,13 +23,14 @@ public:
 	~ConfigWidget();
 
     QString savePath;
+	ConfigParams getParams();
 
 private:
 	Ui::ConfigWidget ui;
 
-    OptionDialog *optionDialog;
-    QSettings *settings;
-	QTimer *timer;
+    OptionDialog optionDialog;
+    QSettings settings;
+	QTimer timer;
 
 	bool isLocked;
 	

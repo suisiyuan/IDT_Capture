@@ -2,37 +2,34 @@
 
 ConfigWidget::ConfigWidget(QWidget *parent) :
 	QWidget(parent),
-    optionDialog(new OptionDialog(this)),
-    settings(new QSettings()),
-    savePath(DEFAULT_FOLDER),
-    isLocked(true),
-	timer(new QTimer())
+    isLocked(true)
 {
 	ui.setupUi(this);
 
-    QObject::connect(parent, SIGNAL(emitBattery(quint8)), this, SLOT(setBatteryBar(quint8)));
-	QObject::connect(timer, SIGNAL(timeout()), parent, SLOT(queryBattery()));
+	if (!settings.contains("savePath"))
+		settings.setValue("savePath", QVariant(DEFAULT_FOLDER));
+	savePath = settings.value("savePath", QVariant(DEFAULT_FOLDER)).toString();
 
-	timer->start(QUERY_INTERVAL);
+    QObject::connect(parent, SIGNAL(emitBattery(quint8)), this, SLOT(setBatteryBar(quint8)));
+	QObject::connect(&timer, SIGNAL(timeout()), parent, SLOT(queryBattery()));
+
+	timer.start(QUERY_INTERVAL);
 }
 
 ConfigWidget::~ConfigWidget()
 {
-	// 释放空间
-	delete optionDialog;
-	delete settings;
-	delete timer;
+
 }
 
 // 配置属性
 void ConfigWidget::on_optionButton_clicked()
 {
-    qint8 result = optionDialog->exec();
+    qint8 result = optionDialog.exec();
     if (result)
     {
-        savePath = optionDialog->getSavePath();
-        if (optionDialog->getSetDefalt())
-            settings->setValue("savePath", QVariant(savePath));
+        savePath = optionDialog.getSavePath();
+        if (optionDialog.getSetDefalt())
+            settings.setValue("savePath", QVariant(savePath));
     }
 }
 
@@ -92,4 +89,16 @@ void ConfigWidget::setBatteryBar(quint8 battery)
 {
     qDebug() << "Set battery";
     ui.batteryBar->setValue(battery);
+}
+
+
+// 获取参数
+ConfigParams ConfigWidget::getParams()
+{
+	ConfigParams params;
+	params.backEnabled = ui.backCheck->isChecked();
+	params.fastEnabled = ui.fastCheck->isChecked();
+	params.isUp2Down = (0 == ui.directionCombo->currentIndex());
+	params.savePath = savePath;
+	return params;
 }

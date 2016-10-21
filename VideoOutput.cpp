@@ -26,11 +26,9 @@ static void unlock(void *op, void *pic, void *const *plane)
 
 
 VideoOutput::VideoOutput(QWidget *parent) :
-    QLabel(parent)
+    QLabel(parent),
+	recording(false)
 {
-//    this->setFrameStyle(QFrame::Panel | QFrame::Sunken);
-//    this->setLineWidth(2);
-
     instance = libvlc_new(0, Q_NULLPTR);
     qDebug() << libvlc_get_version() << libvlc_get_compiler();
     media = libvlc_media_new_location(instance, "rtsp://192.168.1.10:6880/test.264");
@@ -43,9 +41,6 @@ VideoOutput::VideoOutput(QWidget *parent) :
     QObject::connect(parent, SIGNAL(play()), this, SLOT(startPlayer()));
     QObject::connect(parent, SIGNAL(stop()), this, SLOT(stopPlayer()));
     QObject::connect(parent, SIGNAL(stop()), this, SLOT(clear()));
-    QObject::connect(parent, SIGNAL(snapshot(QDir)), this, SLOT(takeSnapshot(QDir)));
-    QObject::connect(parent, SIGNAL(record(QDir)), this, SLOT(startRecord(QDir)));
-	QObject::connect(parent, SIGNAL(endRecord()), this, SLOT(stopRecord()));
 }
 
 
@@ -56,6 +51,11 @@ VideoOutput::~VideoOutput()
     delete param;
 }
 
+
+bool VideoOutput::isRecording()
+{
+	return recording;
+}
 
 
 void VideoOutput::startPlayer()
@@ -69,21 +69,28 @@ void VideoOutput::stopPlayer()
 }
 
 
-void VideoOutput::takeSnapshot(QDir dir)
-{
-    QString name = QDateTime::currentDateTime().toString("yyyy-MM-dd HH.mm.ss").append(".png");
 
-    Mat temp;
-    param->image.copyTo(temp);
-    cvtColor(temp, temp, COLOR_RGBA2BGR);
-    imwrite(dir.filePath(name).toStdString(), temp);
+Mat VideoOutput::takeSnapshot()
+{
+	Mat temp;
+	param->image.copyTo(temp);
+	return temp;
 }
 
 
-void VideoOutput::startRecord(QDir dir)
+bool VideoOutput::takeSnapshot(QString filename)
 {
-    QString filename, parameters, option1, option2;
-    filename = dir.filePath(QDateTime::currentDateTime().toString("yyyy-MM-dd HH.mm.ss").append(".mp4"));
+    Mat temp;
+	param->mutex.lock();
+    param->image.copyTo(temp);
+	param->mutex.unlock();
+    return imwrite(filename.toStdString(), temp);;
+}
+
+
+void VideoOutput::startRecord(QString filename)
+{
+    QString parameters, option1, option2;
     parameters = "std{access=file,mux=mp4,dst='%1'}";
     parameters = parameters.arg(filename);
     option1 = ":sout-all";
@@ -99,10 +106,14 @@ void VideoOutput::startRecord(QDir dir)
 
     libvlc_media_release(recordMedia);
 
+	recording = true;
+
 }
 
 void VideoOutput::stopRecord()
 {
     libvlc_media_player_set_media(player, media);
     libvlc_media_player_play(player);
+
+	recording = false;
 }

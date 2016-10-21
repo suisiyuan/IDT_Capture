@@ -14,7 +14,7 @@ using namespace cv;
 
 #define VIDEO_WIDTH     1280
 #define VIDEO_HEIGHT    720
-#define VIDEO_RATIO     (float)VIDEO_HEIGHT/VIDEO_WIDTH
+#define VIDEO_RATIO     ((float)VIDEO_HEIGHT / VIDEO_WIDTH)
 
 
 typedef struct TCallbackParam
@@ -51,6 +51,13 @@ public:
     VideoOutput(QWidget *parent);
     ~VideoOutput();
 
+	bool isRecording();
+
+public slots:
+	Mat takeSnapshot();
+	bool takeSnapshot(QString);
+	void startRecord(QString);
+	void stopRecord();
 
 private:
     libvlc_instance_t *instance;
@@ -59,13 +66,14 @@ private:
 
     TCallbackParam *param;
 
+	bool recording;
 
 private slots:
-    void startPlayer();
-    void stopPlayer();
-    void takeSnapshot(QDir);
-    void startRecord(QDir);
-	void stopRecord();
+	
+
+	void startPlayer();
+	void stopPlayer();
+
 };
 
 

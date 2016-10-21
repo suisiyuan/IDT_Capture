@@ -7,32 +7,26 @@ MainWidget::MainWidget(QWidget *parent) :
 	udpHisi(new QUdpSocket()),
 	tcpHisi(new QTcpSocket()),
 	tcpEncoder(new QTcpSocket()),
-	settings(new QSettings()),
-    currentDir(Q_NULLPTR)
+	settings(new QSettings())
 {
 	ui.setupUi(this);
 
-    // 配置界面
+    // 配置界面和拼接界面
     ui.frame->setFrameStyle(QFrame::Panel | QFrame::Raised);
     ui.frame->setLineWidth(2);
     ui.frame->layout()->addWidget(configWidget);
-//    configWidget->hide();
 
 	// 注册变量
 	qRegisterMetaType<QAbstractSocket::SocketState>();
 
-	// 信号与槽
+	// 套接字的信号与槽
 	QObject::connect(udpHisi, SIGNAL(stateChanged(QAbstractSocket::SocketState)), this, SLOT(handleHisiUdpState(QAbstractSocket::SocketState)));
 	QObject::connect(tcpHisi, SIGNAL(stateChanged(QAbstractSocket::SocketState)), this, SLOT(handleHisiTcpState(QAbstractSocket::SocketState)));
 	QObject::connect(tcpEncoder, SIGNAL(stateChanged(QAbstractSocket::SocketState)), this, SLOT(handleEncoderTcpState(QAbstractSocket::SocketState)));
-
 	QObject::connect(udpHisi, SIGNAL(readyRead()), this, SLOT(handleHisiUdpData()));
 	QObject::connect(tcpHisi, SIGNAL(readyRead()), this, SLOT(handleHisiTcpData()));
 	QObject::connect(tcpEncoder, SIGNAL(readyRead()), this, SLOT(handleEncoderTcpData()));
-
 }
-
-
 
 
 // 判断套接字是否已连接
@@ -60,15 +54,11 @@ void MainWidget::on_connectButton_clicked()
 		udpHisi->bind(QHostAddress::AnyIPv4, HISI_UDP_PORT);
 		
         emit play();
-
+		queryBattery();
 
 		ui.connectButton->setEnabled(false);
 		ui.disconnectButton->setEnabled(true);
 		ui.startButton->setEnabled(true);
-
-		queryBattery();
-
-
 	}
 	else
 	{
@@ -123,17 +113,8 @@ void MainWidget::on_startButton_clicked()
 
     // 切换界面
     configWidget->hide();
-    stitchWidget = new StitchWidget(this);
+    stitchWidget = new StitchWidget(ui.video, configWidget->getParams(), this);
     ui.frame->layout()->addWidget(stitchWidget);
-
-    // 创建工程文件夹
-    QString currentTime = QDateTime::currentDateTime().toString("yyyy-MM-dd HH.mm.ss");
-    QDir dir(configWidget->savePath);
-	if (!dir.exists())
-		dir.mkpath(configWidget->savePath);
-	
-    dir.mkdir(currentTime);
-    currentDir = new QDir(dir.filePath(currentTime));
 }
 
 // 停止
@@ -152,13 +133,6 @@ void MainWidget::on_stopButton_clicked()
     }
 
     configWidget->show();
-
-    // 销毁工程文件夹指针
-    if (currentDir != Q_NULLPTR)
-    {
-        delete currentDir;
-        currentDir = Q_NULLPTR;
-    }
 }
 
 
@@ -167,7 +141,6 @@ void MainWidget::on_exitButton_clicked()
 {
 	this->close();
 }
-
 
 
 void MainWidget::handleHisiUdpState(QAbstractSocket::SocketState state)
@@ -265,7 +238,6 @@ void MainWidget::handleEncoderTcpData()
 		case TcpMsg::HEIGHT:
 		{
             qint32 height = qFromBigEndian<qint32>((uchar *)msg.getReceivedData().data());
-			//qDebug() << "Height" << height;
             emit emitHeight(height);
 			break;
 		}
@@ -293,23 +265,3 @@ void MainWidget::queryBattery()
 	}
 	
 }
-
-
-// 开始录制视频
-void MainWidget::startRecord()
-{
-    emit record(*currentDir);
-}
-
-
-// 停止录制视频
-void MainWidget::stopRecord()
-{
-	emit endRecord();
-}
-
-void MainWidget::takeSnapshot()
-{
-    emit snapshot(*currentDir);
-}
-

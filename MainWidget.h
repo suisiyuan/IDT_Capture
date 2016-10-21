@@ -12,7 +12,6 @@
 #include "vlc/libvlc.h"
 #include "vlc/libvlc_media.h"
 #include "vlc/libvlc_media_player.h"
-
 #include "opencv2/opencv.hpp"
 
 #include "ui_main.h"
@@ -37,10 +36,6 @@ public:
     MainWidget(QWidget *parent = Q_NULLPTR);
 
 
-public slots:
-    void startRecord();
-    void stopRecord();
-
 private:
 	Ui::MainWidget ui;
 
@@ -50,7 +45,6 @@ private:
 	QUdpSocket *udpHisi;
 	QTcpSocket *tcpHisi, *tcpEncoder;
 	QSettings *settings;
-    QDir *currentDir;
 
 
     // 视频播放器相关
@@ -62,8 +56,6 @@ private:
     // 判断套接字状态
 	bool isConnected(QAbstractSocket *);
 	bool isDisconnected(QAbstractSocket *);
-
-
 
 
 private slots:
@@ -84,8 +76,6 @@ private slots:
 
 	void queryBattery();
 
-    void takeSnapshot();
-
 signals:
     void emitBattery(quint8);
     void emitHeight(qint32);
@@ -93,7 +83,4 @@ signals:
     // 视频相关
     void play();
     void stop();
-    void snapshot(QDir);
-    void record(QDir);
-	void endRecord();
 };

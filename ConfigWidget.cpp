@@ -10,8 +10,17 @@ ConfigWidget::ConfigWidget(QWidget *parent) :
 		settings.setValue("savePath", QVariant(DEFAULT_FOLDER));
 	savePath = settings.value("savePath", QVariant(DEFAULT_FOLDER)).toString();
 
+    if (!settings.contains("led"))
+        settings.setValue("led", QVariant(DEFAULT_LED));
+    led = settings.value("led", QVariant(DEFAULT_LED)).toInt();
+    setLedButton(led);
+
+
     QObject::connect(parent, SIGNAL(emitBattery(quint8)), this, SLOT(setBatteryBar(quint8)));
 	QObject::connect(&timer, SIGNAL(timeout()), parent, SLOT(queryBattery()));
+    QObject::connect(this, SIGNAL(setLed(quint8)), parent, SLOT(setLed(quint8)));
+    QObject::connect(ui.focusButton, SIGNAL(clicked()), parent, SLOT(focusCamera()));
+    QObject::connect(&tempTimer, SIGNAL(timeout()), this, SLOT(setFocusButton()));
 
 	timer.start(QUERY_INTERVAL);
 }
@@ -20,6 +29,10 @@ ConfigWidget::~ConfigWidget()
 {
 
 }
+
+
+
+
 
 // 配置属性
 void ConfigWidget::on_optionButton_clicked()
@@ -84,6 +97,7 @@ void ConfigWidget::on_rightButton_clicked()
 
 }
 
+
 // 设置电量
 void ConfigWidget::setBatteryBar(quint8 battery)
 {
@@ -99,6 +113,54 @@ ConfigParams ConfigWidget::getParams()
 	params.backEnabled = ui.backCheck->isChecked();
 	params.fastEnabled = ui.fastCheck->isChecked();
 	params.isUp2Down = (0 == ui.directionCombo->currentIndex());
-	params.savePath = savePath;
+    params.savePath = QDir(savePath).filePath(QDateTime::currentDateTime().toString("yyyy-MM-dd HH.mm.ss"));
 	return params;
+}
+
+// 降低亮度
+void ConfigWidget::on_decButton_clicked()
+{
+    led--;
+    setLedButton(led);
+    emit setLed(led);
+}
+
+// 提高亮度
+void ConfigWidget::on_incButton_clicked()
+{
+    led++;
+    setLedButton(led);
+    emit setLed(led);
+}
+
+void ConfigWidget::setLedButton(quint8)
+{
+    if (MAX_LED == led)
+    {
+        ui.decButton->setEnabled(true);
+        ui.incButton->setEnabled(false);
+    }
+    else if (MIN_LED == led)
+    {
+        ui.decButton->setEnabled(false);
+        ui.incButton->setEnabled(true);
+    }
+    else
+    {
+        ui.decButton->setEnabled(true);
+        ui.incButton->setEnabled(true);
+    }
+}
+
+
+void ConfigWidget::on_focusButton_clicked()
+{
+    ui.focusButton->setEnabled(false);
+    tempTimer.start(5000);
+}
+
+
+void ConfigWidget::setFocusButton()
+{
+    ui.focusButton->setEnabled(true);
 }

@@ -3,6 +3,9 @@
 #include <QWidget>
 #include <QDebug>
 #include <QPixmap>
+#include <QGraphicsScene>
+#include <QGraphicsPixmapItem>
+#include <QRectF>
 
 #include "ui_stitch.h"
 
@@ -20,7 +23,7 @@ public:
     ~StitchWidget();
 
 public slots:
-    void updateImage(QPixmap);
+    void updateImage(QPixmap, quint16, quint16);
 
 
 private:
@@ -29,10 +32,10 @@ private:
 	QDir dir;
 
 	bool isRecording;
-	VideoOutput *video;
     StitchInstance *instance;
-
-
+	VideoOutput *video;
+    QGraphicsScene *scene;
+    QGraphicsPixmapItem *pixmapItem;
 
 private slots:
 	void on_lastButton_clicked();

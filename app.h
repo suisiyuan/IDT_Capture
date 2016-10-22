@@ -10,7 +10,9 @@
 
 
 #define DEFAULT_FOLDER  (QString("C:/") + COMPANY_NAME)
-
+#define DEFAULT_LED     (5)
+#define MAX_LED         (9)
+#define MIN_LED         (0)
 
 
 #endif // APP_H

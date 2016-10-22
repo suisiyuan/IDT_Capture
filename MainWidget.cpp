@@ -265,3 +265,24 @@ void MainWidget::queryBattery()
 	}
 	
 }
+
+// 设置LED亮度
+void MainWidget::setLed(quint8 led)
+{
+    if (isConnected(tcpHisi))
+    {
+        TcpSendMsg setLedMsg(TcpMsg::LED, QByteArray::number(led));
+        tcpHisi->write(setLedMsg.getSentData().data(), setLedMsg.getSentData().length());
+    }
+}
+
+// 调焦
+void MainWidget::focusCamera()
+{
+    if (isConnected(tcpHisi))
+    {
+        TcpSendMsg focusdMsg(TcpMsg::FOCUS);
+        tcpHisi->write(focusdMsg.getSentData().data(), focusdMsg.getSentData().length());
+    }
+}
+

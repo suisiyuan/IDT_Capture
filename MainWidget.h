@@ -35,7 +35,6 @@ class MainWidget : public QWidget
 public:
     MainWidget(QWidget *parent = Q_NULLPTR);
 
-
 private:
 	Ui::MainWidget ui;
 
@@ -75,6 +74,8 @@ private slots:
 	void handleEncoderTcpData();
 
 	void queryBattery();
+    void setLed(quint8);
+    void focusCamera();
 
 signals:
     void emitBattery(quint8);

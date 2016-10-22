@@ -5,6 +5,8 @@
 #include <QDebug>
 #include <QSettings>
 #include <QTimer>
+#include <QDateTime>
+#include <QDir>
 
 #include "ui_config.h"
 #include "OptionDialog.h"
@@ -22,7 +24,7 @@ public:
 	ConfigWidget(QWidget *parent = Q_NULLPTR);
 	~ConfigWidget();
 
-    QString savePath;
+
 	ConfigParams getParams();
 
 private:
@@ -30,10 +32,13 @@ private:
 
     OptionDialog optionDialog;
     QSettings settings;
-	QTimer timer;
+    QTimer timer, tempTimer;
 
 	bool isLocked;
-	
+    QString savePath;
+    quint8 led;
+
+    void setLedButton(quint8);
 
 private slots:
 	void on_optionButton_clicked();
@@ -45,4 +50,13 @@ private slots:
 	void on_rightButton_clicked();
 
     void setBatteryBar(quint8 battery);
+    void on_decButton_clicked();
+    void on_incButton_clicked();
+
+    void on_focusButton_clicked();
+    void setFocusButton();
+
+signals:
+    void setLed(quint8);
+
 };

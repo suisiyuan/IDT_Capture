@@ -11,10 +11,10 @@ int main(int argc, char *argv[])
 	QApplication::setApplicationVersion(APP_VERSION);
 	QApplication::setOrganizationName(COMPANY_NAME);
 	QApplication::setOrganizationDomain(COMPANY_URL);
-
 	QApplication::setWindowIcon(QIcon(":/photo/IDT.ico"));
 
     MainWidget w;
     w.showMaximized();
+
     return a.exec();
 }

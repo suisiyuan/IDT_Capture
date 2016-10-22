@@ -21,8 +21,8 @@ SOURCES +=  main.cpp\
             TcpReceiveMsg.cpp \
             OptionDialog.cpp \
             VideoOutput.cpp \
-            StitchInstance.cpp \
             crc16/crc.cpp \
+    StitchInstance.cpp
 
 
 HEADERS  += MainWidget.h \
@@ -37,8 +37,8 @@ HEADERS  += MainWidget.h \
             UdpMsg.h \
             OptionDialog.h \
             VideoOutput.h \
-            StitchInstance.h \
             crc16/crc.h \
+    StitchInstance.h
 
 
 FORMS    += main.ui \

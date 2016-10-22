@@ -73,7 +73,9 @@ void VideoOutput::stopPlayer()
 Mat VideoOutput::takeSnapshot()
 {
 	Mat temp;
-	param->image.copyTo(temp);
+    param->mutex.lock();
+    param->image.copyTo(temp);
+    param->mutex.unlock();
 	return temp;
 }
 

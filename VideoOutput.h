@@ -5,7 +5,8 @@
 #include <QDebug>
 #include <QDir>
 #include <QDateTime>
-
+#include <QString>
+#include <QStringList>
 
 #include "vlc/vlc.h"
 #include "opencv2/opencv.hpp"

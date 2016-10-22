@@ -29,10 +29,21 @@ VideoOutput::VideoOutput(QWidget *parent) :
     QLabel(parent),
 	recording(false)
 {
-    instance = libvlc_new(0, Q_NULLPTR);
-    qDebug() << libvlc_get_version() << libvlc_get_compiler();
-    media = libvlc_media_new_location(instance, "rtsp://192.168.1.10:6880/test.264");
-    player = libvlc_media_player_new_from_media(media);
+	QStringList args;
+	args	<< "--intf=dummy"
+			<< "--no-media-library"
+			<< "--no-stats"
+			<< "--no-osd"
+			<< "--no-loop"
+			<< "--no-video-title-show"
+			<< "--drop-late-frames";
+	char **argv = (char **)malloc(sizeof(char **) * args.count());
+	for (int i = 0; i < args.count(); ++i)
+		argv[i] = (char *)qstrdup(args.at(i).toUtf8().data());
+
+    instance = libvlc_new(args.count(), argv);
+    player = libvlc_media_player_new(instance);
+	media = libvlc_media_new_location(instance, "rtsp://192.168.1.10:6880/test.264");
 
     param = new TCallbackParam(this);
     libvlc_video_set_callbacks(player, lock, unlock, NULL, param);
@@ -46,6 +57,7 @@ VideoOutput::VideoOutput(QWidget *parent) :
 
 VideoOutput::~VideoOutput()
 {
+	libvlc_media_release(media);
     libvlc_media_player_release(player);
     libvlc_release(instance);
     delete param;
@@ -60,6 +72,7 @@ bool VideoOutput::isRecording()
 
 void VideoOutput::startPlayer()
 {
+	libvlc_media_player_set_media(player, media);
     libvlc_media_player_play(player);
 }
 

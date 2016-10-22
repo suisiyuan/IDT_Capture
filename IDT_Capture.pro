@@ -22,7 +22,7 @@ SOURCES +=  main.cpp\
             OptionDialog.cpp \
             VideoOutput.cpp \
             crc16/crc.cpp \
-    StitchInstance.cpp
+    DataHandler.cpp
 
 
 HEADERS  += MainWidget.h \
@@ -38,7 +38,7 @@ HEADERS  += MainWidget.h \
             OptionDialog.h \
             VideoOutput.h \
             crc16/crc.h \
-    StitchInstance.h
+    DataHandler.h
 
 
 FORMS    += main.ui \
@@ -54,7 +54,7 @@ win32 {
 
 #vlc
     INCLUDEPATH += $$(VLC_DIR)/include
-    LIBS += -L$$(VLC_DIR)/lib -llibvlc -llibvlccore
+    LIBS += -L$$(VLC_DIR)/x86/lib -llibvlc -llibvlccore
 }
 
 RESOURCES += res.qrc

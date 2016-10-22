@@ -4,7 +4,6 @@ StitchWidget::StitchWidget(VideoOutput *videoOutput, ConfigParams params, QWidge
 	QWidget(parent),
 	dir(QDir(params.savePath)),
 	isRecording(false),
-    instance(new StitchInstance(params, videoOutput)),
     scene(new QGraphicsScene()),
     pixmapItem(new QGraphicsPixmapItem()),
     video(videoOutput)
@@ -31,9 +30,7 @@ StitchWidget::StitchWidget(VideoOutput *videoOutput, ConfigParams params, QWidge
     qDebug() << ui.stitchView->width() << ui.stitchView->height();
 
 	// 高度
-    QObject::connect(parent, SIGNAL(emitHeight(qint32)), instance, SLOT(getHeight(qint32)));
-    // 更新显示照片
-    QObject::connect(instance, SIGNAL(updateImage(QPixmap,uint16,uint16)), this, SLOT(updateImage(QPixmap,uint16,uint16)));
+    QObject::connect(parent, SIGNAL(emitHeight(qint32)), this, SLOT(getHeight(qint32)));
 }
 
 
@@ -41,7 +38,6 @@ StitchWidget::~StitchWidget()
 {
 	if (video->isRecording())
 		video->stopRecord();
-    delete instance;
 }
 
 // 上一页
@@ -87,20 +83,7 @@ void StitchWidget::on_snapshotButton_clicked()
 		qDebug() << "Save snapshot to disk failed!";
 }
 
-
-// 更新展示照片
-void StitchWidget::updateImage(QPixmap pixmap, quint16 currentIndex, quint16 count)
+void StitchWidget::getHeight(qint32 height)
 {
-    scene->addPixmap(pixmap.scaledToWidth(ui.stitchView->width()));
-
-    if (currentIndex < count)
-        ui.nextButton->setEnabled(true);
-    else if (currentIndex == count)
-        ui.nextButton->setEnabled(false);
-
-    if (0 < currentIndex)
-        ui.lastButton->setEnabled(true);
-    else if (0 == currentIndex)
-        ui.lastButton->setEnabled(false);
-
+	// qDebug() << "Height:" << height * HEIGHT_RATIO;
 }

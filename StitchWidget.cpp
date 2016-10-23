@@ -4,30 +4,19 @@ StitchWidget::StitchWidget(VideoOutput *videoOutput, ConfigParams params, QWidge
 	QWidget(parent),
 	dir(QDir(params.savePath)),
 	isRecording(false),
-    scene(new QGraphicsScene()),
-    pixmapItem(new QGraphicsPixmapItem()),
     video(videoOutput)
 {
 	ui.setupUi(this);
+	
+	ui.scrollArea->setBackgroundRole(QPalette::Dark);
 
 	// 检查工程文件保存路径是否存在
 	if (!dir.exists())
 		dir.mkpath(params.savePath);
 
-    qDebug() << ui.stitchView->width() << ui.stitchView->height();
+	QPixmap temp("D:\\test.png");
+	ui.imageLabel->setPixmap(temp.scaledToWidth(350));
 
-    // 新建图片
-    QPixmap pixmap(200, 200);
-    pixmap.fill(Qt::black);
-    pixmapItem->setPixmap(pixmap);
-
-    // 添加QGraphicsScene
-    scene->setSceneRect(0, 0, 1000, 1000);
-    scene->addItem(pixmapItem);
-
-    ui.stitchView->setScene(scene);
-
-    qDebug() << ui.stitchView->width() << ui.stitchView->height();
 
 	// 高度
     QObject::connect(parent, SIGNAL(emitHeight(qint32)), this, SLOT(getHeight(qint32)));

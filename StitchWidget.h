@@ -7,6 +7,7 @@
 #include <QGraphicsPixmapItem>
 #include <QRectF>
 #include <QList>
+#include <QLabel>
 
 #include "ui_stitch.h"
 
@@ -14,13 +15,10 @@
 
 #include "config.h"
 #include "opencv2/opencv.hpp"
-
-
+ 
 using namespace cv;
 
-// ¸ß¶È±ÈÀý
 #define HEIGHT_RATIO		((double)400 / 4096)
-
 
 class StitchWidget : public QWidget
 {
@@ -36,8 +34,6 @@ private:
 	QDir dir;
 	bool isRecording;
 	VideoOutput *video;
-    QGraphicsScene *scene;
-    QGraphicsPixmapItem *pixmapItem;
 
 	bool backEnabled, fastEnabled, isUp2Down;
 	qint32 lastHeight, currentHeight;

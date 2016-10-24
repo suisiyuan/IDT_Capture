@@ -4,7 +4,8 @@ StitchWidget::StitchWidget(VideoOutput *videoOutput, ConfigParams params, QWidge
 	QWidget(parent),
 	dir(QDir(params.savePath)),
 	isRecording(false),
-    video(videoOutput)
+    video(videoOutput),
+	lastHeight(0)
 {
 	ui.setupUi(this);
 	
@@ -14,11 +15,7 @@ StitchWidget::StitchWidget(VideoOutput *videoOutput, ConfigParams params, QWidge
 	if (!dir.exists())
 		dir.mkpath(params.savePath);
 
-	QPixmap temp("D:\\test.png");
-	ui.imageLabel->setPixmap(temp.scaledToWidth(350));
-
-
-	// 高度
+	// 接收来自套接字的高度
     QObject::connect(parent, SIGNAL(emitHeight(qint32)), this, SLOT(getHeight(qint32)));
 }
 
@@ -74,5 +71,10 @@ void StitchWidget::on_snapshotButton_clicked()
 
 void StitchWidget::getHeight(qint32 height)
 {
-	// qDebug() << "Height:" << height * HEIGHT_RATIO;
+	//qDebug() << "Height:" << height * HEIGHT_RATIO;
+	// 如果满足条件
+	if (height - lastHeight > 50)
+	{
+
+	}
 }

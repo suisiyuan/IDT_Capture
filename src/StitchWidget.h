@@ -36,9 +36,10 @@ private:
 	VideoOutput *video;
 
 	bool backEnabled, fastEnabled, isUp2Down;
-	qint32 lastHeight, currentHeight;
+	qint32 lastHeight;
 	QList<quint32> saveHeightList;
 	quint16 currentIndex, count;
+
 	Mat stitchingImage;
 
 private slots:

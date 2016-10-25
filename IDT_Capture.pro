@@ -9,7 +9,7 @@ QT       += core gui network sql
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = IDT_Capture
-TEMPLATE = app
+TEMPLATE = vcapp
 
 INCLUDEPATH += src
 
@@ -49,17 +49,32 @@ FORMS    += ui/main.ui \
             ui/stitch.ui \
             ui/option.ui
 
-win32 {
-#opencv3
-    INCLUDEPATH += $$(OPENCV3_DIR)/include
-    CONFIG(release, debug|release): LIBS += -L$$(OPENCV3_DIR)/x86/vc14/lib -lopencv_core310 -lopencv_highgui310 -lopencv_imgcodecs310 -lopencv_imgproc310 -lopencv_stitching310
-    else:CONFIG(debug, debug|release): LIBS += -L$$(OPENCV3_DIR)/x86/vc14/lib -lopencv_core310d -lopencv_highgui310d -lopencv_imgcodecs310d -lopencv_imgproc310d -lopencv_stitching310d
+RESOURCES += res.qrc
+RC_FILE = res.rc
 
-#vlc
+CONFIG(release, debug|release) {
+    UI_DIR = release
+    RCC_DIR = release
+    MOC_DIR = release
+    OBJECTS_DIR = release
+} else {
+    UI_DIR = debug
+    RCC_DIR = debug
+    MOC_DIR = debug
+    OBJECTS_DIR = debug
+}
+
+
+win32 {
+#opencv-3.1.0
+    INCLUDEPATH += $$(OPENCV_DIR)/include
+    CONFIG(release, debug|release): LIBS += -L$$(OPENCV_DIR)/x86/vc14/lib -lopencv_core310 -lopencv_highgui310 -lopencv_imgcodecs310 -lopencv_imgproc310 -lopencv_stitching310
+    else:CONFIG(debug, debug|release): LIBS += -L$$(OPENCV_DIR)/x86/vc14/lib -lopencv_core310d -lopencv_highgui310d -lopencv_imgcodecs310d -lopencv_imgproc310d -lopencv_stitching310d
+
+#vlc-2.2.4
     INCLUDEPATH += $$(VLC_DIR)/include
     LIBS += -L$$(VLC_DIR)/x86/lib -llibvlc -llibvlccore
 }
 
-RESOURCES += res.qrc
-RC_FILE = res.rc
+
 
